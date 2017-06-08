@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="ServiceFabricApp1Type" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+  <Parameters>
+    <Parameter Name="MyStatelessService_InstanceCount" DefaultValue="-1" />
+    <Parameter Name="Api_InstanceCount" DefaultValue="-1" />
+    <Parameter Name="MyStatefulService_MinReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="MyStatefulService_PartitionCount" DefaultValue="1" />
+    <Parameter Name="MyStatefulService_TargetReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="Actor1ActorService_PartitionCount" DefaultValue="10" />
+    <Parameter Name="Actor1ActorService_MinReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="Actor1ActorService_TargetReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="Api_MyStatefulServiceName" DefaultValue="MyStatefulService" />
+    <Parameter Name="Api_MyStatelessServiceName" DefaultValue="MyStatelessService" />
+    <Parameter Name="Api_ActorServiceName" DefaultValue="Actor1ActorService" />
+    <Parameter Name="TestConnectionString" DefaultValue="Server=.\SQLEXPRESS;Database=Testing;User Id=sa;Password=Password987!;" />
+  </Parameters>
+  <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
+       should match the Name and Version attributes of the ServiceManifest element defined in the 
+       ServiceManifest.xml file. -->
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="MyStatelessServicePkg" ServiceManifestVersion="1.0.0" />
+    <ConfigOverrides />
+  </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="Actor1Pkg" ServiceManifestVersion="1.0.0" />
+    <ConfigOverrides>
+      <ConfigOverride Name="Config">
+        <Settings>
+          <Section Name="DatabaseSettings">
+            <Parameter Name="TestConnectionString" Value="[TestConnectionString]" />
+          </Section>
+        </Settings>
+      </ConfigOverride>
+    </ConfigOverrides>
+  </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="ApiPkg" ServiceManifestVersion="1.0.0" />
+    <ConfigOverrides />
+  </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="MyStatefulServicePkg" ServiceManifestVersion="1.0.0" />
+    <ConfigOverrides>
+      <ConfigOverride Name="Config">
+        <Settings>
+          <Section Name="DatabaseSettings">
+            <Parameter Name="TestConnectionString" Value="[TestConnectionString]" />
+          </Section>
+        </Settings>
+      </ConfigOverride>
+    </ConfigOverrides>
+  </ServiceManifestImport>
+  <DefaultServices>
+    <!-- The section below creates instances of service types, when an instance of this 
+         application type is created. You can also create one or more instances of service type using the 
+         ServiceFabric PowerShell module.
+         
+         The attribute ServiceTypeName below must match the name defined in the imported ServiceManifest.xml file. -->
+    <Service Name="MyStatelessService">
+      <StatelessService ServiceTypeName="MyStatelessServiceType" InstanceCount="[MyStatelessService_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="Api">
+      <StatelessService ServiceTypeName="ApiType" InstanceCount="[Api_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="MyStatefulService">
+      <StatefulService ServiceTypeName="MyStatefulServiceType" TargetReplicaSetSize="[MyStatefulService_TargetReplicaSetSize]" MinReplicaSetSize="[MyStatefulService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[MyStatefulService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
+    <Service Name="Actor1ActorService" GeneratedIdRef="b6a6b054-0ea0-4c6d-8a3c-0c317e2d1b08|Persisted">
+      <StatefulService ServiceTypeName="Actor1ActorServiceType" TargetReplicaSetSize="[Actor1ActorService_TargetReplicaSetSize]" MinReplicaSetSize="[Actor1ActorService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[Actor1ActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
+  </DefaultServices>
+</ApplicationManifest>
