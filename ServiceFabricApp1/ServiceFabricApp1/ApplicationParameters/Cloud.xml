@@ -6,5 +6,9 @@
     <Parameter Name="MyStatefulService_PartitionCount" Value="1" />
     <Parameter Name="MyStatefulService_MinReplicaSetSize" Value="3" />
     <Parameter Name="MyStatefulService_TargetReplicaSetSize" Value="3" />
+    <Parameter Name="Actor1ActorService_PartitionCount" Value="10" />
+    <Parameter Name="Actor1ActorService_MinReplicaSetSize" Value="3" />
+    <Parameter Name="Actor1ActorService_TargetReplicaSetSize" Value="3" />
+    <Parameter Name="TestConnectionString" Value="SomeConnectionStringValidForTheCloudCluster" />
   </Parameters>
 </Application>
